@@ -1,0 +1,53 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+
+.container {
+  display: flex;
+  flex-direction: row; /* Tetap sejajar (horizontal) */
+  justify-content: center; /* Pusatkan secara horizontal */
+  align-items: center; /* Pusatkan secara vertikal */
+  width: 100%; /* Gunakan lebar penuh */
+  max-width: 1500px; /* Batasi lebar agar tidak terlalu lebar */
+  min-height: 10vh; /* Pastikan elemen berada di tengah viewport */
+  gap: 50px; /* Jarak antara Canvas dan Table */
+  margin:  auto; /* Pusatkan seluruh container */
+}
+
+
+.canvas-container {
+    flex: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 50%;
+    padding-top: 12px;
+}
+
+.table-container {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  min-width: 40%;
+  color: black;
+}
+
+.title {
+  text-align: center; /* Pusatkan teks */
+  width: 100%; /* Pastikan elemen memenuhi lebar */
+  font-size: 2rem; /* Sesuaikan ukuran font */
+  font-weight: bold;
+  margin-top: 20px; /* Beri sedikit jarak dari atas */
+}
