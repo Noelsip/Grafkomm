@@ -60,7 +60,7 @@ export default function Canvas(props) {
         const setJarakBayangan = props.setJarakBayangan
         const setTinggiBayangan = props.setTinggiBayangan
 
-        const titikX = ctx.canvas.width / 2
+        const titikX = ctx.canvas.width /2
         const titikY = ctx.canvas.height / 2
 
         const hasilJarakBayangan = jarakBenda * titikFokus / (jarakBenda - titikFokus)
@@ -84,8 +84,9 @@ export default function Canvas(props) {
         } 
 
         //Cartesian Plane
-        draw_line(ctx, point(titikX, 0), point(titikX, ctx.canvas.width), 'black')
-        draw_line(ctx, point(0, titikY), point(ctx.canvas.height, titikY), 'black')
+        draw_line(ctx, point(titikX, 0), point(titikX, ctx.canvas.height), 'black'); // Sumbu Y
+        draw_line(ctx, point(0, titikY), point(ctx.canvas.width, titikY), 'black'); // Sumbu X
+        
         //Object
         draw_line(ctx, point(x, titikY), point(x, y), 'red')
         //Reflection
@@ -135,6 +136,14 @@ export default function Canvas(props) {
     }, [draw])
     
     return (
-    <canvas className="flex w-screen h-screen border-4 bg-zinc-900 rounded-lg" width="1000" height='1000' ref={canvasRef} {...props}/>
-    )
+        <div className="canvas-container">
+            <canvas 
+                className="border-4 bg-zinc-900 rounded-lg"
+                width={window.innerWidth} 
+                height={window.innerHeight} 
+                ref={canvasRef} 
+                {...props} 
+            />
+        </div>
+    );
 }
