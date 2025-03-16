@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ilustrasi Cermin Cekung</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Ilustrasi Cermin Cekung</h1>
+    <div class="container">
+        <canvas id="canvas"></canvas>
+        <div class="controls">
+            <h2>Data Simulasi</h2>
+            <label>Ukuran Benda: 
+                <input type="range" id="objectHeightSlider" min="10" max="200" value="80">
+                <input type="number" id="objectHeightInput" value="80">
+            </label>
+            <label>Jarak Benda: 
+                <input type="range" id="objectDistanceSlider" min="50" max="300" value="150">
+                <input type="number" id="objectDistanceInput" value="150">
+            </label>
+            <label>Titik Fokus Cermin: 
+                <input type="range" id="focalLengthSlider" min="50" max="200" value="100">
+                <input type="number" id="focalLengthInput" value="100">
+            </label>
+            <label>Jarak Bayangan: 
+                <input type="text" id="imageDistanceInput" readonly>
+            </label>
+            <label>Ukuran Bayangan: 
+                <input type="text" id="imageHeightInput" readonly>
+            </label>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
