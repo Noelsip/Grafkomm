@@ -7,31 +7,33 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Ilustrasi Cermin Cekung</h1>
-    <div class="container">
-        <canvas id="canvas"></canvas>
-        <div class="controls">
-            <h2>Data Simulasi</h2>
-            <label>Ukuran Benda: 
-                <input type="range" id="objectHeightSlider" min="10" max="200" value="80">
-                <input type="number" id="objectHeightInput" value="80">
-            </label>
-            <label>Jarak Benda: 
-                <input type="range" id="objectDistanceSlider" min="50" max="300" value="150">
-                <input type="number" id="objectDistanceInput" value="150">
-            </label>
-            <label>Titik Fokus Cermin: 
-                <input type="range" id="focalLengthSlider" min="50" max="200" value="100">
-                <input type="number" id="focalLengthInput" value="100">
-            </label>
-            <label>Jarak Bayangan: 
-                <input type="text" id="imageDistanceInput" readonly>
-            </label>
-            <label>Ukuran Bayangan: 
-                <input type="text" id="imageHeightInput" readonly>
-            </label>
-        </div>
+    <h1>Simulasi Cermin Cekung</h1>
+
+    <canvas id="canvas" width="800" height="400"></canvas>
+
+    <div class="control-panel">
+        <label for="focusSlider">Fokus (F):</label>
+        <input type="range" id="focusSlider" class="slider" min="50" max="200" value="100">
+        <input type="number" id="focusInput" value="100" class="slider">
+
+        <br>
+
+        <label for="objectXSlider">Posisi Objek (X):</label>
+        <input type="range" id="objectXSlider" class="slider" min="50" max="750" value="300">
+        <input type="number" id="objectXInput" value="300" class="slider">
+
+        <br>
+
+        <label for="objectHeightSlider">Tinggi Objek:</label>
+        <input type="range" id="objectHeightSlider" class="slider" min="50" max="150" value="100">
+        <input type="number" id="objectHeightInput" value="100" class="slider">
     </div>
+
+    <div class="output">
+        <p>Jarak Bayangan: <span id="imageDistance">0</span></p>
+        <p>Tinggi Bayangan: <span id="imageHeight">0</span></p>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
