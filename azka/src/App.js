@@ -1,4 +1,3 @@
-
 import './index.css';
 import Canvas from './components/Canvas';
 import DataTable from './components/DataTable';
@@ -46,7 +45,7 @@ function App() {
       {/* Footer */}
       <div className="flex m-5 p-5 items-center justify-center">
         <h1 className="flex text-lg font-semibold text-stone-50">
-          GRAFKOM <span className="p-1"></span> Kelompok 9 ANJAY
+          <span className="p-1"></span>
         </h1>
       </div>
     </div>
