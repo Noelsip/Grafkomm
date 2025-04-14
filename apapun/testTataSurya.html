@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tata Surya 3D</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@latest/build/three.module.js"
+            }
+        }
+    </script>
+</head>
+<body>
+    <script type="module">
+        import * as THREE from 'three';
+
+        // Setup scene
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Matahari
+        const sunGeometry = new THREE.SphereGeometry(5, 32, 32);
+        const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+        const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+        scene.add(sun);
+
+        // Planet
+        const planetGeometry = new THREE.SphereGeometry(1, 32, 32);
+        const planetMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff });
+        const planet = new THREE.Mesh(planetGeometry, planetMaterial);
+        scene.add(planet);
+
+        // Posisi awal planet
+        let angle = 0;
+        let radius = 10;
+
+        // Animasi orbit planet
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Algoritma Rotasi & Translasi untuk orbit
+            angle += 0.01; // Kecepatan revolusi
+            planet.position.x = radius * Math.cos(angle);
+            planet.position.z = radius * Math.sin(angle);
+
+            renderer.render(scene, camera);
+        }
+
+        // Kamera posisi awal
+        camera.position.z = 20;
+
+        animate();
+    </script>
+</body>
+</html>

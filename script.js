@@ -17,11 +17,14 @@ const infoHeight = document.getElementById("imageHeight");
 function drawScene(focus, objectX, objectHeight) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+<<<<<<< HEAD
   const swordWidth = 10;
   const tipHeight = 10;
   const hiltHeight = 25;
   const bladeHeight = objectHeight - tipHeight - hiltHeight;
 
+=======
+>>>>>>> 66381a7099355cee71163ee7df94d2282e68c2cd
   // Sumbu utama
   ctx.beginPath();
   ctx.moveTo(0, centerY);
@@ -52,6 +55,7 @@ function drawScene(focus, objectX, objectHeight) {
   ctx.arc(mirrorX - focus, centerY, 3, 0, 2 * Math.PI);
   ctx.fill();
 
+<<<<<<< HEAD
   // Objek: Pedang
   const baseY = centerY;
   const hiltY = baseY - hiltHeight;
@@ -92,11 +96,33 @@ ctx.stroke();
   ctx.beginPath();
   ctx.moveTo(objectX, tipY);
   ctx.lineTo(mirrorX, tipY);
+=======
+  // Objek (panah hijau)
+  ctx.beginPath();
+  ctx.moveTo(objectX, centerY);
+  ctx.lineTo(objectX, centerY - objectHeight);
+  ctx.lineTo(objectX - 5, centerY - objectHeight + 10);
+  ctx.moveTo(objectX, centerY - objectHeight);
+  ctx.lineTo(objectX + 5, centerY - objectHeight + 10);
+  ctx.strokeStyle = "green";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.fillText("Objek", objectX - 20, centerY - objectHeight - 10);
+
+  // Sinar sejajar → pantul ke fokus
+  ctx.beginPath();
+  ctx.moveTo(objectX, centerY - objectHeight);
+  ctx.lineTo(mirrorX, centerY - objectHeight);
+>>>>>>> 66381a7099355cee71163ee7df94d2282e68c2cd
   ctx.strokeStyle = "orange";
   ctx.stroke();
 
   ctx.beginPath();
+<<<<<<< HEAD
   ctx.moveTo(mirrorX, tipY);
+=======
+  ctx.moveTo(mirrorX, centerY - objectHeight);
+>>>>>>> 66381a7099355cee71163ee7df94d2282e68c2cd
   ctx.lineTo(mirrorX - focus, centerY);
   ctx.setLineDash([5, 5]);
   ctx.stroke();
@@ -104,7 +130,11 @@ ctx.stroke();
 
   // Sinar ke fokus → pantul sejajar
   ctx.beginPath();
+<<<<<<< HEAD
   ctx.moveTo(objectX, tipY);
+=======
+  ctx.moveTo(objectX, centerY - objectHeight);
+>>>>>>> 66381a7099355cee71163ee7df94d2282e68c2cd
   ctx.lineTo(mirrorX - focus, centerY);
   ctx.strokeStyle = "orange";
   ctx.stroke();
@@ -116,6 +146,7 @@ ctx.stroke();
   ctx.stroke();
   ctx.setLineDash([]);
 
+<<<<<<< HEAD
   // Hitung bayangan
   const distance = mirrorX - objectX;
   const imageX = 1 / (1 / focus - 1 / distance);
@@ -166,6 +197,43 @@ ctx.stroke();
 }
 
 // Sinkronisasi slider dan input
+=======
+  // Bayangan
+  const distance = mirrorX - objectX;
+  const imageX = 1 / (1 / focus - 1 / distance);  // rumus cermin: 1/f = 1/s + 1/s'
+  const realImageX = mirrorX - imageX;
+  const magnification = imageX / distance;
+  const imageHeight = -objectHeight * magnification;
+
+  // Update tampilan informasi
+  infoDistance.textContent = distance.toFixed(2);
+  infoHeight.textContent = imageHeight.toFixed(2);
+
+  ctx.beginPath();
+  ctx.moveTo(realImageX, centerY);
+  ctx.lineTo(realImageX, centerY - imageHeight);
+
+  // Ujung panah bayangan
+  if (imageHeight < 0) {
+    // Terbalik
+    ctx.lineTo(realImageX - 5, centerY - imageHeight - 10);
+    ctx.moveTo(realImageX, centerY - imageHeight);
+    ctx.lineTo(realImageX + 5, centerY - imageHeight - 10);
+  } else {
+    // Tegak
+    ctx.lineTo(realImageX - 5, centerY - imageHeight + 10);
+    ctx.moveTo(realImageX, centerY - imageHeight);
+    ctx.lineTo(realImageX + 5, centerY - imageHeight + 10);
+  }
+
+  ctx.strokeStyle = "red";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.fillText("Bayangan", realImageX - 25, centerY - imageHeight - 10);
+}
+
+// Event sinkronisasi slider dan input
+>>>>>>> 66381a7099355cee71163ee7df94d2282e68c2cd
 function syncSliderAndInput(slider, input, callback) {
   slider.addEventListener('input', () => {
     input.value = slider.value;
@@ -185,7 +253,11 @@ function update() {
   drawScene(focus, objectX, objectHeight);
 }
 
+<<<<<<< HEAD
 // Sinkronkan kontrol
+=======
+// Sinkronkan semua kontrol
+>>>>>>> 66381a7099355cee71163ee7df94d2282e68c2cd
 syncSliderAndInput(focusSlider, focusInput, update);
 syncSliderAndInput(objectXSlider, objectXInput, update);
 syncSliderAndInput(objectHeightSlider, objectHeightInput, update);
