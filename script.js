@@ -19,13 +19,16 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
+
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+// Orbit controls
+const controls = new OrbitControls(camera, renderer.domElement);
 
 // Cahaya
 const pointLight = new THREE.PointLight(0xffffff, 2, 500);
 pointLight.position.set(0, 0, 0);
-
 
 pointLight.castShadow = true;
 pointLight.shadow.mapSize.width = 2048;
@@ -85,6 +88,7 @@ for (let i = 0; i < asteroidCount; i++) {
         speed: 0.02 + Math.random() * 0.01 // speed random sedikit supaya alami
     });
 }
+
 // Membuat planet dan label
 planetsData.forEach(data => {
     const geometry = new THREE.SphereGeometry(data.size, 32, 32);
@@ -172,7 +176,9 @@ planetsData.forEach(data => {
     );
     orbit.rotation.x = Math.PI / 2; // Biar sejajar XY
     scene.add(orbit);
+
 });
+
 
 // Fungsi bikin path orbit
 function createOrbitPath(radius) {
@@ -211,11 +217,11 @@ function animate() {
         moon.position.z = Math.sin(planet.mesh.userData.moonAngle) * planet.mesh.userData.moonDistance;
         planet.mesh.rotation.y += planet.rotationSpeed;
     }
-
     });
 
     controls.update();
     renderer.render(scene, camera);
+
     asteroidGroup.forEach(asteroid => {
         asteroid.angle += asteroid.speed * 0.00235; // lebih lambat dari planet
         asteroid.mesh.position.x = asteroid.radius * Math.cos(asteroid.angle);
@@ -223,5 +229,6 @@ function animate() {
     });
     
 }
+
 
 animate();
