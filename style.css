@@ -1,18 +1,9 @@
 body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    margin: 20px;
+    margin: 0;
+    overflow: hidden;
+    background-color: black; /* Latar belakang hitam untuk efek luar angkasa */
 }
-#canvas {
-    border: 1px solid black;
-    margin-bottom: 20px;
-}
-.control-panel {
-    margin: 20px 0;
-}
-.slider {
-    width: 300px;
-}
-.output {
-    margin-top: 10px;
+
+canvas {
+    display: block;
 }
