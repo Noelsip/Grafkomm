@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import * as TWEEN from '@tweenjs/tween.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 // Setup
@@ -28,6 +29,7 @@ const sunTexture = textureLoader.load('assets/textures/sun.jpg');
 const sunMaterial = new THREE.MeshBasicMaterial({ map: sunTexture });
 const sunGeometry = new THREE.SphereGeometry(5, 64, 64);
 const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+sun.name = "Sun";
 scene.add(sun);
 
 // Cahaya matahari
@@ -327,8 +329,81 @@ function animate() {
 
     });
 
+    TWEEN.update();
+
+    if (focusedPlanet) {
+        const planetPos = focusedPlanet.getWorldPosition(new THREE.Vector3());
+        const desiredPos = new THREE.Vector3().addVectors(
+            planetPos,
+            cameraOffset.clone().setLength(followDistance)
+        );
+        camera.position.lerp(desiredPos, 0.05); // Smooth follow
+        controls.target.copy(planetPos);
+    }
+
     controls.update();
     renderer.render(scene, camera);
+}
+
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+let focusedPlanet = null;
+let followDistance = 10; // Jarak kamera dari planet yang difokuskan
+let cameraOffset = new THREE.Vector3();
+
+window.addEventListener("click", onclick, false);
+
+function onclick(event) {
+    event.preventDefault();
+
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(planets.map(p => p.mesh));
+
+    if (intersects.length > 0) {
+        const selected = intersects[0].object;
+
+        // Cek apakah yang diklik adalah matahari
+        if (selected.name === "Sun") {
+            focusedPlanet = null;
+
+            // Kembali ke posisi kamera awal untuk lihat semua planet
+            const resetPos = new THREE.Vector3(0, 50, 150); // ← Sesuaikan dengan posisi awal kameramu
+
+            new TWEEN.Tween(camera.position)
+                .to({ x: resetPos.x, y: resetPos.y, z: resetPos.z }, 1000)
+                .easing(TWEEN.Easing.Quadratic.Out)
+                .onUpdate(() => {
+                    controls.target.set(0, 0, 0); // Fokus ke tengah tata surya
+                    controls.update();
+                })
+                .start();
+
+            return; // Stop di sini agar tidak lanjut ke logika fokus planet
+        }
+
+        // Fokus ke planet selain matahari
+        focusedPlanet = selected;
+        const planetPos = focusedPlanet.getWorldPosition(new THREE.Vector3());
+        cameraOffset.copy(camera.position).sub(planetPos);
+
+        const targetCamPos = new THREE.Vector3().addVectors(
+            planetPos,
+            cameraOffset.clone().setLength(followDistance)
+        );
+
+        new TWEEN.Tween(camera.position)
+            .to({ x: targetCamPos.x, y: targetCamPos.y, z: targetCamPos.z }, 1000)
+            .easing(TWEEN.Easing.Quadratic.Out)
+            .onUpdate(() => {
+                controls.target.copy(focusedPlanet.getWorldPosition(new THREE.Vector3()));
+                controls.update();
+            })
+            .start();
+    }
 }
 
 animate();
