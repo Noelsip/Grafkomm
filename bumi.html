@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tata Surya 3D</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@latest/build/three.module.js",
+                "three/examples/jsm/controls/OrbitControls.js": "https://cdn.jsdelivr.net/npm/three@latest/examples/jsm/controls/OrbitControls.js"
+            }
+        }
+    </script>
+    <input id="speedControl" type="range" min="0" max="5" step="0.1" value="1" style="position: absolute; top: 10px; left: 10px;">
+
+    
+    <label for="speedControl" style="position: absolute; top: 10px; left: 180px; color: white;">Kecepatan</label>
+</head>
+<body>
+    <canvas id="earthCanvas"></canvas>
+    <script type="module" src="test.js"></script>
+</body>
+</html>
