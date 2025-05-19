@@ -102,6 +102,43 @@ const planetsData = [
     { name: 'Neptunus', texture: 'neptunus.jpg', radius: 57, size: 0.95, speed: 0.01 }
 ];
 
+// Asteroid Belt
+const asteroidGroup = [];
+
+const asteroidCount = 1000;
+const asteroidInnerRadius = 29;
+const asteroidOuterRadius = 32;
+
+for(let i = 0; i < asteroidCount; i++){
+    const angle = Math.random() * Math.PI * 2;
+    const radius = THREE.MathUtils.lerp(asteroidInnerRadius, asteroidOuterRadius, Math.random());
+
+    // fix asteroid size which then small
+    const asteroidSize = Math.random() * 0.1 + 0.05;
+    const geometry = new THREE.SphereGeometry(asteroidSize, 8, 8);
+
+    // Add the materials for asteroid with gray color for variation
+    const grayScale = Math.random() * 0.4 + 0.4;
+    const material = new THREE.MeshLambertMaterial({
+        color: new THREE.Color(grayScale, grayScale, grayScale),
+    });
+
+    const asteroid = new THREE.Mesh(geometry, material);
+
+    asteroid.position.x = Math.cos(angle) * radius;
+    asteroid.position.z = Math.sin(angle) * radius;
+    asteroid.position.y = (Math.random() - 0.5) * 2;
+
+    scene.add(asteroid);
+
+    asteroidGroup.push({
+        mesh: asteroid,
+        radius: radius,
+        angle: angle,
+        speed: 0.02 + Math.random() * 0.01
+    });
+}
+
 // Planet array
 const planets = [];
 
@@ -138,12 +175,12 @@ planetsData.forEach(data => {
             varying vec3 vNormal;
             varying vec3 vWorldPosition;
             void main() {
-              vec3 lightDir = normalize(lightDirection - vWorldPosition);
-              float intensity = dot(normalize(vNormal), lightDir);
-              intensity = clamp(intensity, 0.0, 1.0);
-              vec4 day = texture2D(dayTexture, vUv);
-              vec4 night = texture2D(nightTexture, vUv);
-              gl_FragColor = mix(night, day, intensity);
+                vec3 lightDir = normalize(lightDirection - vWorldPosition);
+                float intensity = dot(normalize(vNormal), lightDir);
+                intensity = clamp(intensity, 0.0, 1.0);
+                vec4 day = texture2D(dayTexture, vUv);
+                vec4 night = texture2D(nightTexture, vUv);
+                gl_FragColor = mix(night, day, intensity);
             }
           `,
         });
@@ -179,8 +216,8 @@ planetsData.forEach(data => {
         ringTexture.wrapT = THREE.ClampToEdgeWrapping; // karena kita tidak ingin vertikal diulang
         ringTexture.repeat.set(10, 1);
 
-        const innerRadius = 1.2;
-        const outerRadius = 2.0;
+        const innerRadius = 1.7;
+        const outerRadius = 2.5;
         const segments = 128;
         const ringGeometry = new THREE.RingGeometry(innerRadius, outerRadius, segments);
 
@@ -207,7 +244,7 @@ planetsData.forEach(data => {
         const ringMesh = new THREE.Mesh(ringGeometry, ringMaterial);
         ringMesh.rotation.x = Math.PI / 2;        
 
-        ringMesh.rotation.x = Math.PI / 2;
+        // ringMesh.rotation.x = Math.PI / 2;
         ringMesh.position.y = 0.01;
     
         // Jika planetMesh adalah Mesh, ubah jadi Group agar bisa ditambahkan cincin
@@ -297,6 +334,8 @@ document.getElementById('speedControl').addEventListener('input', (e) => {
 function animate() {
     requestAnimationFrame(animate);
 
+    // const delta = simulationSpeed * 0.1;
+
     glowMaterial.uniforms.viewVector.value = new THREE.Vector3().subVectors(
         camera.position, glowMesh.position
     );
@@ -328,6 +367,16 @@ function animate() {
 
 
     });
+
+    asteroidGroup.forEach(ast => {
+        ast.angle += ast.speed * simulationSpeed;
+        ast.mesh.position.x = Math.cos(ast.angle) * ast.radius;
+        ast.mesh.position.z = Math.sin(ast.angle) * ast.radius;
+
+        // small rotate for asteroid
+        ast.mesh.rotation.x += 0.01 * simulationSpeed;
+        ast.mesh.rotation.y += 0.02 * simulationSpeed;
+    })
 
     TWEEN.update();
 
@@ -367,26 +416,24 @@ function onclick(event) {
         const selected = intersects[0].object;
 
         // Cek apakah yang diklik adalah matahari
-        if (selected.name === "Sun") {
+        if (focusedPlanet == selected){
             focusedPlanet = null;
 
-            // Kembali ke posisi kamera awal untuk lihat semua planet
-            const resetPos = new THREE.Vector3(0, 50, 150); // ← Sesuaikan dengan posisi awal kameramu
-
+            const resetPos = new THREE.Vector3(0, 50, 150);
             new TWEEN.Tween(camera.position)
-                .to({ x: resetPos.x, y: resetPos.y, z: resetPos.z }, 1000)
+                .to({x: resetPos.x, y: resetPos.y, z:resetPos.z}, 1000)
                 .easing(TWEEN.Easing.Quadratic.Out)
                 .onUpdate(() => {
-                    controls.target.set(0, 0, 0); // Fokus ke tengah tata surya
+                    controls.target.set(0, 0, 0);
                     controls.update();
                 })
                 .start();
-
-            return; // Stop di sini agar tidak lanjut ke logika fokus planet
+            return;
         }
 
         // Fokus ke planet selain matahari
         focusedPlanet = selected;
+
         const planetPos = focusedPlanet.getWorldPosition(new THREE.Vector3());
         cameraOffset.copy(camera.position).sub(planetPos);
 
