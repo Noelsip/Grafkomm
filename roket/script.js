@@ -25,7 +25,7 @@ directionalLight.shadow.mapSize.height = 2048;
 scene.add(directionalLight);
 
 // --- Ground (hijau seperti rumput) ---
-const groundGeometry = new THREE.PlaneGeometry(200, 200);
+const groundGeometry = new THREE.PlaneGeometry(2000, 2000);
 const groundMaterial = new THREE.MeshLambertMaterial({ color: 0x4a7c59 });
 const ground = new THREE.Mesh(groundGeometry, groundMaterial);
 ground.rotation.x = -Math.PI / 2;
@@ -356,7 +356,7 @@ let launchStartTime = null;
 let velocity = 0;
 let tiltAngle = 0;
 const delayBeforeLiftOff = 2000;
-const acceleration = 0.8;
+const acceleration = 2;
 
 const initialRocketPosition = rocket.position.clone();
 const initialRocketRotation = rocket.rotation.clone();
@@ -368,6 +368,12 @@ let moveLeft = false, moveRight = false;
 document.addEventListener('keydown', (e) => {
   if (e.key === 'a' || e.key === 'ArrowLeft') moveLeft = true;
   if (e.key === 'd' || e.key === 'ArrowRight') moveRight = true;
+  if (e.key === ' ' && !islaunching)
+    islaunching = true,
+    mainFlame.visible = true,
+    sideFlames.forEach(flame => flame.visible = true),
+    launchStartTime = performance.now(),
+    velocity = 0;
 });
 
 document.addEventListener('keyup', (e) => {
