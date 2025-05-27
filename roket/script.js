@@ -13,6 +13,68 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild(renderer.domElement);
 
+// Mouse Controls
+let isMouseDown = false;
+let mouseX = 0;
+let mouseY = 0;
+let cameraDistance = 30;
+let cameraAngleX = 0;
+let cameraAngleY = 0.3;
+let followsRocket = true;
+let targetPosition = new THREE.Vector3(0, 0, 0);
+
+function updateCameraPosition(){
+
+  targetPosition.copy(rocket.position);
+  
+  const x = targetPosition.x + Math.cos(cameraAngleX) * Math.cos(cameraAngleY) * cameraDistance;
+  const y = targetPosition.y + Math.sin(cameraAngleY) * cameraDistance;
+  const z = targetPosition.z + Math.sin(cameraAngleX) * Math.cos(cameraAngleY) * cameraDistance;
+
+  camera.position.set(x, y, z);
+  camera.lookAt(targetPosition);
+}
+
+// Mouse Event Listener for Camera Control
+renderer.domElement.addEventListener('mousedown', (event) => {
+  isMouseDown = true;
+  mouseX = event.clientX;
+  mouseY = event.clientY;
+  renderer.domElement.style.cursor = 'grabbing';
+});
+
+renderer.domElement.addEventListener('mouseup', () => {
+  isMouseDown = false;
+  renderer.domElement.style.cursor = 'grab';
+});
+
+renderer.domElement.addEventListener('mousemove', (event) => {
+  if (isMouseDown) {
+    const deltaX = event.clientX - mouseX;
+    const deltaY = event.clientY - mouseY;
+
+    cameraAngleX -= deltaX * 0.003;
+    cameraAngleY += deltaY * 0.003;
+    
+    cameraAngleY = Math.max(-Math.PI / 2, Math.min(Math.PI / 2 - 0.1, cameraAngleY)); // Limit vertical angle
+    
+    mouseX = event.clientX;
+    mouseY = event.clientY;
+
+    updateCameraPosition();
+  }
+});
+
+// Mouse wheel for zoom
+renderer.domElement.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  cameraDistance += e.deltaY * 0.01;
+  cameraDistance = Math.max(5, Math.min(200, cameraDistance));
+  updateCameraPosition();
+});
+
+renderer.domElement.style.cursor = 'grab';
+
 // --- Lights ---
 const ambientLight = new THREE.AmbientLight(0x404040, 0.4);
 scene.add(ambientLight);
@@ -374,6 +436,8 @@ document.addEventListener('keydown', (e) => {
     sideFlames.forEach(flame => flame.visible = true),
     launchStartTime = performance.now(),
     velocity = 0;
+    updateCameraPosition();
+
 });
 
 document.addEventListener('keyup', (e) => {
@@ -514,13 +578,17 @@ function animate() {
       const newPosition = initialRocketPosition.clone().add(direction.multiplyScalar(distance));
       rocket.position.copy(newPosition);
 
-      // Camera follows rocket
-      camera.position.set(
-        rocket.position.x + 15, 
-        Math.max(rocket.position.y + 5, 8), 
-        rocket.position.z + 20
-      );
-      camera.lookAt(rocket.position);
+      // // Camera follows rocket
+      // camera.position.set(
+      //   rocket.position.x + 15, 
+      //   Math.max(rocket.position.y + 5, 8), 
+      //   rocket.position.z + 20
+      // );
+      // camera.lookAt(rocket.position);
+      if (islaunching) {
+        updateCameraPosition();
+        
+      }
     }
   }
   camera.lookAt(rocket.position);
