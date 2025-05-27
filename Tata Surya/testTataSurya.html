@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tata Surya 3D</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@latest/build/three.module.js",
+<<<<<<< HEAD
+                "three/examples/jsm/controls/OrbitControls.js": "https://cdn.jsdelivr.net/npm/three@latest/examples/jsm/controls/OrbitControls.js",
+                "@tweenjs/tween.js": "https://cdn.jsdelivr.net/npm/@tweenjs/tween.js@18.6.4/dist/tween.esm.js"
+=======
+                "three/examples/jsm/controls/OrbitControls.js": "https://cdn.jsdelivr.net/npm/three@latest/examples/jsm/controls/OrbitControls.js"
+                
+>>>>>>> 411bbeac10a79963bd67ec1c19d7ae0289fef20b
+            }
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <label for="speedControl">Kecepatan Simulasi: <span id="speedValue">1</span>x</label>
+    <input type="range" id="speedControl" min="0" max="5" step="0.1" value="1">
+    <select id="planetSelector">
+        <option value="">Solar System</option>
+        <option value="Merkurius">Merkurius</option>
+        <option value="Venus">Venus</option>
+        <option value="Bumi">Bumi</option>
+        <option value="Mars">Mars</option>
+        <option value="Jupiter">Jupiter</option>
+        <option value="Saturnus">Saturnus</option>
+        <option value="Uranus">Uranus</option>
+        <option value="Neptunus">Neptunus</option>
+    </select>
+    
+    <div id="trackingStatus">Tidak melacak</div>
+
+</head>
+<body>
+    <canvas id="solarSystem"></canvas>
+    <script type="module" src="script.js"></script>
+</body>
+</html>
