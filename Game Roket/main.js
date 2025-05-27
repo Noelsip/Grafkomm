@@ -1,7 +1,7 @@
 // main.js
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js';
 import { ROCKET_CONFIG, GRAVITY, AIR_DENSITY_SEA_LEVEL } from './logic/constants.js';
-import { setupScene, camera, renderer, scene } from './logic/sceneSetup.js';
+import { setupScene, camera, renderer, scene, setCameraTarget } from './logic/sceneSetup.js';
 import { createGround, createLaunchPlatform, createLaunchTower } from './logic/environment.js';
 import { createRocket, rocket, sideBoosterGroup } from './logic/rocket.js';
 import { EngineEffect } from './logic/engineEffects.js';
@@ -10,6 +10,10 @@ import { setupInputListeners, controls } from './logic/input.js';
 import { setupUIListeners } from './logic/ui.js';
 import { updatePhysics } from './logic/physics.js';
 import { updateHUD } from './logic/hud.js';
+
+// Camera control mode
+let cameraMode = 'free'; // 'free' or 'follow'
+let followCameraEnabled = false;
 
 // Initialize scene, camera, and renderer
 setupScene();
@@ -33,6 +37,36 @@ setupInputListeners();
 
 // UI Controls
 setupUIListeners(rocketState, sideBoosterGroup, mainEngineEffect, leftBoosterEffect, rightBoosterEffect);
+
+// Add camera toggle functionality
+window.addEventListener('keydown', (event) => {
+  if (event.code === 'KeyC') {
+    cameraMode = cameraMode === 'free' ? 'follow' : 'free';
+    console.log(`Camera mode: ${cameraMode}`);
+    
+    // Show notification
+    const notification = document.createElement('div');
+    notification.textContent = `Camera Mode: ${cameraMode.toUpperCase()}`;
+    notification.style.cssText = `
+      position: fixed;
+      top: 50px;
+      right: 20px;
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-family: Arial, sans-serif;
+      z-index: 1000;
+      transition: opacity 0.3s;
+    `;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.style.opacity = '0';
+      setTimeout(() => document.body.removeChild(notification), 300);
+    }, 2000);
+  }
+});
 
 // Update visual effects
 function updateVisualEffects() {
@@ -73,17 +107,25 @@ function updateVisualEffects() {
   }
 }
 
-// Update camera
+// Update camera with mode switching
 function updateCamera() {
-  const altitude = Math.max(0, rocketState.position.y - 1.5);
-  const distance = Math.max(20, altitude * 0.3 + 20);
-  
-  camera.position.set(
-    rocketState.position.x + distance * 0.8,
-    Math.max(rocketState.position.y + distance * 0.3, 8),
-    rocketState.position.z + distance
-  );
-  camera.lookAt(rocketState.position);
+  if (cameraMode === 'follow') {
+    // Auto-follow camera mode
+    const altitude = Math.max(0, rocketState.position.y - 1.5);
+    const distance = Math.max(20, altitude * 0.3 + 20);
+    
+    camera.position.set(
+      rocketState.position.x + distance * 0.8,
+      Math.max(rocketState.position.y + distance * 0.3, 8),
+      rocketState.position.z + distance
+    );
+    camera.lookAt(rocketState.position);
+  } else {
+    // Free camera mode - update target to follow rocket for smooth transitions
+    if (setCameraTarget) {
+      setCameraTarget(rocketState.position.x, rocketState.position.y, rocketState.position.z);
+    }
+  }
 }
 
 // Ground collision detection
@@ -135,6 +177,21 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
+// Add instructions to HUD
+const instructions = document.createElement('div');
+instructions.innerHTML = `
+  <div style="position: fixed; top: 50%; left: 10px; transform: translateY(-50%); background: rgba(0,0,0,0.7); color: white; padding: 15px; border-radius: 8px; font-family: Arial, sans-serif; font-size: 14px; z-index: 1000;">
+    <h4 style="margin: 0 0 10px 0; color: #4CAF50;">🎮 Controls</h4>
+    <div style="margin: 5px 0;"><strong>Camera:</strong></div>
+    <div style="margin: 5px 0;">• Left Drag: Rotate</div>
+    <div style="margin: 5px 0;">• Right Drag: Pan</div>
+    <div style="margin: 5px 0;">• Scroll: Zoom</div>
+    <div style="margin: 5px 0;">• <strong>C Key:</strong> Toggle Camera Mode</div>
+  </div>
+
+`;
+document.body.appendChild(instructions);
 
 // Start animation
 animate(0);
