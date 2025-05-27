@@ -1,13 +1,19 @@
 import * as THREE from 'three';
 import * as TWEEN from '@tweenjs/tween.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+// Tidak perlu mengimpor gsap karena sudah diimpor melalui CDN di HTML
 
 // Setup
 const scene = new THREE.Scene();
 
 // Background bintang
 const textureLoader = new THREE.TextureLoader();
-scene.background = textureLoader.load('assets/textures/star_background.jpg');
+try {
+    scene.background = textureLoader.load('assets/textures/star_background.jpg');
+} catch (error) {
+    console.warn('Texture tidak ditemukan:', error);
+    scene.background = new THREE.Color(0x000011); // Fallback ke warna biru gelap
+}
 
 // Kamera
 const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -25,8 +31,18 @@ renderer.setPixelRatio(window.devicePixelRatio);
 const controls = new OrbitControls(camera, renderer.domElement);
 
 // Matahari
-const sunTexture = textureLoader.load('assets/textures/sun.jpg');
-const sunMaterial = new THREE.MeshBasicMaterial({ map: sunTexture });
+let sunTexture;
+try {
+    sunTexture = textureLoader.load('assets/textures/sun.jpg');
+} catch (error) {
+    console.warn('Texture matahari tidak ditemukan:', error);
+    sunTexture = null;
+}
+
+const sunMaterial = sunTexture ? 
+    new THREE.MeshBasicMaterial({ map: sunTexture }) : 
+    new THREE.MeshBasicMaterial({ color: 0xffdd00 });
+
 const sunGeometry = new THREE.SphereGeometry(5, 64, 64);
 const sun = new THREE.Mesh(sunGeometry, sunMaterial);
 sun.name = "Sun";
@@ -81,7 +97,7 @@ scene.add(glowMesh);
 
 // Data planet
 const planetsData = [
-    { name: 'Merkurius', texture: 'markurius.jpg', radius: 10, size: 0.3, speed: 0.04 },
+    { name: 'Merkurius', texture: 'merkurius.jpg', radius: 10, size: 0.3, speed: 0.04 },
     { name: 'Venus', texture: 'venus.jpg', radius: 15, size: 0.6, speed: 0.032 },
     {
         name: 'Bumi',
@@ -97,18 +113,24 @@ const planetsData = [
     },
     { name: 'Mars', texture: 'mars.jpg', radius: 26, size: 0.4, speed: 0.023 },
     { name: 'Jupiter', texture: 'jupiter.jpg', radius: 35, size: 1.5, speed: 0.019 },
-    { name: 'Saturnus', texture: 'saturnus.jpg',ringTexture: 'saturnusring.jpg', radius: 43, size: 1.3, speed: 0.016 },
+    { name: 'Saturnus', texture: 'saturnus.jpg', ringTexture: 'saturnusring.jpg', radius: 43, size: 1.3, speed: 0.016 },
     { name: 'Uranus', texture: 'uranus.jpg', radius: 50, size: 1.0, speed: 0.013 },
     { name: 'Neptunus', texture: 'neptunus.jpg', radius: 57, size: 0.95, speed: 0.01 }
 ];
 
+<<<<<<< HEAD
 // Asteroid Belt
 const asteroidGroup = [];
+=======
+// Asteroid belt
+const asteroidGroup = []; // Array untuk asteroid-asteroid
+>>>>>>> 411bbeac10a79963bd67ec1c19d7ae0289fef20b
 
 const asteroidCount = 1000;
 const asteroidInnerRadius = 29;
 const asteroidOuterRadius = 32;
 
+<<<<<<< HEAD
 for(let i = 0; i < asteroidCount; i++){
     const angle = Math.random() * Math.PI * 2;
     const radius = THREE.MathUtils.lerp(asteroidInnerRadius, asteroidOuterRadius, Math.random());
@@ -123,6 +145,22 @@ for(let i = 0; i < asteroidCount; i++){
         color: new THREE.Color(grayScale, grayScale, grayScale),
     });
 
+=======
+for (let i = 0; i < asteroidCount; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const radius = THREE.MathUtils.lerp(asteroidInnerRadius, asteroidOuterRadius, Math.random());
+
+    // Perbaiki ukuran asteroid yang terlalu kecil
+    const asteroidSize = Math.random() * 0.1 + 0.05;
+    const geometry = new THREE.SphereGeometry(asteroidSize, 8, 8);
+    
+    // Tambahkan material untuk asteroid dengan warna abu-abu acak untuk variasi
+    const grayScale = Math.random() * 0.4 + 0.4; // Nilai antara 0.4-0.8
+    const material = new THREE.MeshLambertMaterial({ 
+        color: new THREE.Color(grayScale, grayScale, grayScale) 
+    });
+    
+>>>>>>> 411bbeac10a79963bd67ec1c19d7ae0289fef20b
     const asteroid = new THREE.Mesh(geometry, material);
 
     asteroid.position.x = Math.cos(angle) * radius;
@@ -135,12 +173,33 @@ for(let i = 0; i < asteroidCount; i++){
         mesh: asteroid,
         radius: radius,
         angle: angle,
+<<<<<<< HEAD
         speed: 0.02 + Math.random() * 0.01
+=======
+        speed: 0.02 + Math.random() * 0.01 // speed random sedikit supaya alami
+>>>>>>> 411bbeac10a79963bd67ec1c19d7ae0289fef20b
     });
 }
 
 // Planet array
 const planets = [];
+
+// Fungsi untuk menangani kesalahan loading texture
+function loadTexture(path) {
+    try {
+        return textureLoader.load(path, 
+            undefined, 
+            undefined, 
+            (err) => {
+                console.warn(`Texture tidak ditemukan: ${path}`, err);
+                return null;
+            }
+        );
+    } catch (error) {
+        console.warn(`Error loading texture ${path}:`, error);
+        return null;
+    }
+}
 
 // Membuat planet dan orbit
 planetsData.forEach(data => {
@@ -150,10 +209,14 @@ planetsData.forEach(data => {
     let planetMesh;
 
     if (data.name === 'Bumi') {
+        // Load textures with error handling
+        const dayTexture = loadTexture(`assets/textures/${data.dayTexture}`);
+        const nightTexture = loadTexture(`assets/textures/${data.nightTexture}`);
+
         const material = new THREE.ShaderMaterial({
             uniforms: {
-                dayTexture: { value: textureLoader.load(`assets/textures/${data.texture}`) },
-                nightTexture: { value: textureLoader.load(`assets/textures/${data.nightTexture}`) },
+                dayTexture: { value: dayTexture || new THREE.Texture() },
+                nightTexture: { value: nightTexture || new THREE.Texture() },
                 lightDirection: { value: new THREE.Vector3(5, 0, 5) }
             },
             vertexShader: `
@@ -188,11 +251,11 @@ planetsData.forEach(data => {
         const earthMesh = new THREE.Mesh(geometry, material);
 
         // Awan
-        const cloudTexture = textureLoader.load(`assets/textures/${data.cloudTexture}`);
+        const cloudTexture = loadTexture(`assets/textures/${data.cloudTexture}`);
         const clouds = new THREE.Mesh(
             new THREE.SphereGeometry(data.size * 1.01, 64, 64),
             new THREE.MeshLambertMaterial({
-                map: cloudTexture,
+                map: cloudTexture || new THREE.Texture(),
                 transparent: true,
                 opacity: 0.5,
                 depthWrite: false
@@ -202,19 +265,22 @@ planetsData.forEach(data => {
         planetMesh = new THREE.Group();
         planetMesh.add(earthMesh);
         planetMesh.add(clouds);
-
+        planetMesh.userData.name = data.name;
 
     } else if (data.name === 'Saturnus') {
+        const saturnTexture = loadTexture(`assets/textures/${data.texture}`);
         material = new THREE.MeshLambertMaterial({
-            map: textureLoader.load(`assets/textures/${data.texture}`)
+            map: saturnTexture || new THREE.Texture(),
+            color: saturnTexture ? 0xffffff : 0xc2a579 // Fallback color if texture fails
         });
 
         const saturnusMesh = new THREE.Mesh(geometry, material);
 
-        const ringTexture = textureLoader.load(`assets/textures/${data.ringTexture}`);
-        ringTexture.wrapS = THREE.RepeatWrapping;
-        ringTexture.wrapT = THREE.ClampToEdgeWrapping; // karena kita tidak ingin vertikal diulang
-        ringTexture.repeat.set(10, 1);
+        const ringTexture = loadTexture(`assets/textures/${data.ringTexture}`);
+        if (ringTexture) {
+            ringTexture.wrapS = THREE.RepeatWrapping;
+            ringTexture.wrapT = THREE.ClampToEdgeWrapping; // karena kita tidak ingin vertikal diulang
+        }
 
         const innerRadius = 1.7;
         const outerRadius = 2.5;
@@ -231,18 +297,19 @@ planetsData.forEach(data => {
             const radius = Math.sqrt(x * x + y * y);
 
             uvs.setXY(i,
-                (angle + Math.PI) / (2 * Math.PI) * ringTexture.repeat.x, // U
+                (angle + Math.PI) / (2 * Math.PI), // U
                 (radius - innerRadius) / (outerRadius - innerRadius)       // V
             );
         }
 
         const ringMaterial = new THREE.MeshBasicMaterial({
-            map: ringTexture,
+            map: ringTexture || null,
+            color: ringTexture ? 0xffffff : 0xc2a579, // Fallback color
             side: THREE.DoubleSide,
-            transparent: true
+            transparent: true,
+            depthWrite: true
         });
         const ringMesh = new THREE.Mesh(ringGeometry, ringMaterial);
-        ringMesh.rotation.x = Math.PI / 2;        
 
         // ringMesh.rotation.x = Math.PI / 2;
         ringMesh.position.y = 0.01;
@@ -251,13 +318,17 @@ planetsData.forEach(data => {
         planetMesh = new THREE.Group();
         planetMesh.add(saturnusMesh);
         planetMesh.add(ringMesh);
+        planetMesh.userData.name = data.name;
     
-    }else {
+    } else {
+        const planetTexture = loadTexture(`assets/textures/${data.texture}`);
         material = new THREE.MeshLambertMaterial({
-            map: textureLoader.load(`assets/textures/${data.texture}`)
+            map: planetTexture || null,
+            color: planetTexture ? 0xffffff : getDefaultPlanetColor(data.name) // Fallback color
         });
 
         planetMesh = new THREE.Mesh(geometry, material);
+        planetMesh.userData.name = data.name;
     }
 
     scene.add(planetMesh);
@@ -265,38 +336,42 @@ planetsData.forEach(data => {
     const orbit = new THREE.LineLoop(
         new THREE.BufferGeometry().setFromPoints(createOrbitPath(data.radius)),
         new THREE.LineBasicMaterial({ color: 0xffffff })
-    )
+    );
     orbit.rotation.x = Math.PI / 2;
     scene.add(orbit);
 
     const planetSatellites = [];
 
-    data.satellites?.forEach(sat => {
-        const satGeometry = new THREE.SphereGeometry(sat.size, 32, 32);
-        const satMaterial = new THREE.MeshLambertMaterial({
-            map: textureLoader.load(`assets/textures/${sat.texture}`)
+    if (data.satellites) {
+        data.satellites.forEach(sat => {
+            const satGeometry = new THREE.SphereGeometry(sat.size, 32, 32);
+            const satTexture = loadTexture(`assets/textures/${sat.texture}`);
+            const satMaterial = new THREE.MeshLambertMaterial({
+                map: satTexture || null,
+                color: satTexture ? 0xffffff : 0xcccccc // Fallback color for moon
+            });
+            const satMesh = new THREE.Mesh(satGeometry, satMaterial);
+
+            satMesh.castShadow = true;
+            satMesh.receiveShadow = false;
+
+            scene.add(satMesh);
+
+            const satOrbit = new THREE.LineLoop(
+                new THREE.BufferGeometry().setFromPoints(createOrbitPath(sat.radius)),
+                new THREE.LineBasicMaterial({ color: 0xffffff })
+            );
+            satOrbit.rotation.x = Math.PI / 2;
+            planetMesh.add(satOrbit);
+
+            planetSatellites.push({
+                mesh: satMesh,
+                radius: sat.radius,
+                speed: sat.speed,
+                angle: Math.random() * Math.PI * 2
+            });
         });
-        const satMesh = new THREE.Mesh(satGeometry, satMaterial);
-
-        satMesh.castShadow = true;
-        satMesh.receiveShadow = false;
-
-        scene.add(satMesh);
-
-        const satOrbit = new THREE.LineLoop(
-            new THREE.BufferGeometry().setFromPoints(createOrbitPath(sat.radius)),
-            new THREE.LineBasicMaterial({ color: 0xffffff })
-        );
-        satOrbit.rotation.x = Math.PI / 2;
-        planetMesh.add(satOrbit);
-
-        planetSatellites.push({
-            mesh: satMesh,
-            radius: sat.radius,
-            speed: sat.speed,
-            angle: Math.random() * Math.PI * 2
-        });
-    });
+    }
     
     planets.push({
         mesh: planetMesh,
@@ -304,8 +379,23 @@ planetsData.forEach(data => {
         speed: data.speed,
         angle: Math.random() * Math.PI * 2,
         satellites: planetSatellites
-    })
+    });
 });
+
+// Fungsi untuk mendapatkan warna default planet jika texture gagal dimuat
+function getDefaultPlanetColor(planetName) {
+    const colors = {
+        'Merkurius': 0x8c8c8c, // Abu-abu
+        'Venus': 0xffd700,     // Kuning
+        'Bumi': 0x0077be,      // Biru
+        'Mars': 0xb22222,      // Merah
+        'Jupiter': 0xdeb887,   // Coklat terang
+        'Saturnus': 0xf0e68c,  // Khaki
+        'Uranus': 0xadd8e6,    // Biru muda
+        'Neptunus': 0x4169e1   // Biru tua
+    };
+    return colors[planetName] || 0xcccccc; // Default abu-abu muda
+}
 
 // Orbit path helper
 function createOrbitPath(radius) {
@@ -326,48 +416,158 @@ window.addEventListener('resize', () => {
 
 // Kecepatan simulasi
 let simulationSpeed = 1;
-document.getElementById('speedControl').addEventListener('input', (e) => {
+const speedControl = document.getElementById('speedControl');
+const speedValue = document.getElementById('speedValue');
+
+speedControl.addEventListener('input', (e) => {
     simulationSpeed = parseFloat(e.target.value);
+    speedValue.textContent = simulationSpeed.toFixed(1);
+});
+
+// Variables for planet tracking
+let currentlyTracking = null;
+let trackingOffset = new THREE.Vector3(0, 5, 10); // Inisialisasi tracking offset
+
+function zoomOut() {
+    currentlyTracking = null;
+
+    const endPosition = new THREE.Vector3(0, 50, 100);
+    const endTarget = new THREE.Vector3(0, 0, 0);
+
+    gsap.to(camera.position, {
+        duration: 2,
+        x: endPosition.x,
+        y: endPosition.y,
+        z: endPosition.z,
+        onUpdate: () => controls.update()
+    });
+
+    gsap.to(controls.target, {
+        duration: 2,
+        x: endTarget.x,
+        y: endTarget.y,
+        z: endTarget.z,
+        onUpdate: () => controls.update()
+    });
+
+    document.getElementById('trackingStatus').textContent = 'Tidak melacak';
+    document.getElementById('planetSelector').value = '';
+}
+
+// Fungsi zoom ke planet tertentu dan otomatis tracking
+function zoomToPlanet(planetName) {
+    const planet = planets.find(p => p.mesh.userData?.name === planetName);
+    if (!planet) return;
+
+    currentlyTracking = planet;
+
+    const planetWorldPosition = new THREE.Vector3();
+    planet.mesh.getWorldPosition(planetWorldPosition);
+
+    // Menghitung offset berdasarkan ukuran planet (planet lebih besar = offset lebih jauh)
+    const radius = planet.mesh instanceof THREE.Mesh ? 
+        planet.mesh.geometry.parameters.radius : 
+        (planet.mesh.children[0]?.geometry?.parameters?.radius || 1);
+    
+    // Membuat offset berdasarkan ukuran planet (jarak kamera dari planet)
+    const offsetDistance = radius ;
+    trackingOffset = new THREE.Vector3(0, offsetDistance/2, offsetDistance);
+
+    // Posisi baru kamera
+    const newPosition = planetWorldPosition.clone().add(trackingOffset);
+
+    // GSAP animasi posisi kamera dan target
+    gsap.to(camera.position, {
+        duration: 2,
+        x: newPosition.x,
+        y: newPosition.y,
+        z: newPosition.z,
+        ease: "power2.inOut",
+        onUpdate: () => {
+            camera.lookAt(planet.position); // pastikan selalu melihat planet
+        }
+    });
+
+    gsap.to(controls.target, {
+        duration: 2,
+        x: planetWorldPosition.x,
+        y: planetWorldPosition.y,
+        z: planetWorldPosition.z,
+        onUpdate: () => controls.update()
+    });
+
+    document.getElementById('trackingStatus').textContent = `Melacak ${planetName}`;
+}
+
+// Dropdown handler - langsung tracking planet saat dipilih
+document.getElementById('planetSelector').addEventListener('change', (e) => {
+    const name = e.target.value;
+    if (name === "") {
+        // Stop tracking if empty selection
+        zoomOut();
+    } else if (name) {
+        // Zoom dan mulai tracking otomatis
+        zoomToPlanet(name);
+    }
 });
 
 // Animasi
 function animate() {
     requestAnimationFrame(animate);
 
+<<<<<<< HEAD
     // const delta = simulationSpeed * 0.1;
 
+=======
+    const delta = simulationSpeed * 0.1;
+
+    // Rotasi matahari
+    sun.rotation.y += 0.005 * delta;
+    
+    // Update glowMesh position and viewVector
+>>>>>>> 411bbeac10a79963bd67ec1c19d7ae0289fef20b
     glowMaterial.uniforms.viewVector.value = new THREE.Vector3().subVectors(
-        camera.position, glowMesh.position
+        camera.position,
+        glowMesh.position
     );
 
-    sun.rotation.y += 0.001 * simulationSpeed;
-
+    // Update planet posisi
     planets.forEach(planet => {
-        planet.angle += planet.speed * simulationSpeed;
-
-        planet.mesh.position.x = planet.radius * Math.cos(planet.angle);
-        planet.mesh.position.z = planet.radius * Math.sin(planet.angle);
-
-        planet.mesh.rotation.y += 0.01 * simulationSpeed;
-
-        // Jika planet adalah grup (seperti Bumi), rotasi awannya
-        if (planet.mesh.children && planet.mesh.children.length > 1) {
-            const clouds = planet.mesh.children[1];
-            clouds.rotation.y += 0.001 * simulationSpeed;
+        planet.angle += planet.speed * delta;
+        const x = Math.cos(planet.angle) * planet.radius;
+        const z = Math.sin(planet.angle) * planet.radius;
+        planet.mesh.position.set(x, 0, z);
+        
+        // Tambahkan rotasi planet
+        if (planet.mesh instanceof THREE.Mesh) {
+            planet.mesh.rotation.y += planet.speed * 2 * delta;
+        } else if (planet.mesh instanceof THREE.Group) {
+            // Jika planet adalah group (Bumi atau Saturnus), rotasi child pertama
+            if (planet.mesh.children[0]) {
+                planet.mesh.children[0].rotation.y += planet.speed * 2 * delta;
+            }
+            
+            // Untuk Bumi, rotasi awan sedikit lebih cepat
+            if (planet.mesh.userData.name === 'Bumi' && planet.mesh.children[1]) {
+                planet.mesh.children[1].rotation.y += planet.speed * 2.2 * delta;
+            }
         }
 
-        planet.satellites?.forEach(sat => {
-            sat.angle += sat.speed * simulationSpeed;
-            sat.mesh.position.x = planet.mesh.position.x + sat.radius * Math.cos(sat.angle);
-            sat.mesh.position.z = planet.mesh.position.z + sat.radius * Math.sin(sat.angle);
-            sat.mesh.position.y = planet.mesh.position.y;
-
-            sat.mesh.rotation.y += 0.01 * simulationSpeed;
-        });
-
-
+        // Update satelit jika ada
+        if (planet.satellites) {
+            planet.satellites.forEach(sat => {
+                sat.angle += sat.speed * delta;
+                const sx = x + Math.cos(sat.angle) * sat.radius;
+                const sz = z + Math.sin(sat.angle) * sat.radius;
+                sat.mesh.position.set(sx, 0, sz);
+                
+                // Tambahkan rotasi satelit
+                sat.mesh.rotation.y += sat.speed * 1.5 * delta;
+            });
+        }
     });
 
+<<<<<<< HEAD
     asteroidGroup.forEach(ast => {
         ast.angle += ast.speed * simulationSpeed;
         ast.mesh.position.x = Math.cos(ast.angle) * ast.radius;
@@ -454,3 +654,34 @@ function onclick(event) {
 }
 
 animate();
+=======
+    // Update asteroid belt
+    asteroidGroup.forEach(ast => {
+        ast.angle += ast.speed * delta;
+        ast.mesh.position.x = Math.cos(ast.angle) * ast.radius;
+        ast.mesh.position.z = Math.sin(ast.angle) * ast.radius;
+        
+        // Rotasi kecil untuk asteroid
+        ast.mesh.rotation.x += 0.01 * delta;
+        ast.mesh.rotation.y += 0.02 * delta;
+    });
+
+    // Update pelacakan planet
+    if (currentlyTracking) {
+        const planetPos = new THREE.Vector3();
+        currentlyTracking.mesh.getWorldPosition(planetPos);
+        
+        // Hitung posisi kamera relatif terhadap planet dengan offset
+        const desiredPos = planetPos.clone().add(trackingOffset);
+        
+
+        // Gunakan lerp untuk animasi smooth
+        camera.position.lerp(desiredPos, 0.05);
+        controls.target.lerp(planetPos, 0.05);
+        controls.update();
+    }
+
+    renderer.render(scene, camera);
+}
+animate();
+>>>>>>> 411bbeac10a79963bd67ec1c19d7ae0289fef20b

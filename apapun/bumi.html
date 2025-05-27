@@ -1,25 +1,84 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tata Surya 3D</title>
-    <link rel="stylesheet" href="style.css">
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://cdn.jsdelivr.net/npm/three@latest/build/three.module.js",
-                "three/examples/jsm/controls/OrbitControls.js": "https://cdn.jsdelivr.net/npm/three@latest/examples/jsm/controls/OrbitControls.js"
-            }
-        }
-    </script>
-    <input id="speedControl" type="range" min="0" max="5" step="0.1" value="1" style="position: absolute; top: 10px; left: 10px;">
-
-    
-    <label for="speedControl" style="position: absolute; top: 10px; left: 180px; color: white;">Kecepatan</label>
+  <meta charset="UTF-8" />
+  <title>Simulasi Tabrakan Dua Planet dengan GLBB</title>
+  <style>
+    body { margin: 0; }
+    canvas { display: block; }
+  </style>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+      }
+    }
+  </script>
 </head>
 <body>
-    <canvas id="earthCanvas"></canvas>
-    <script type="module" src="test.js"></script>
+  <script type="module">
+    import * as THREE from 'three';
+
+    // Inisialisasi scene, kamera, dan renderer
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Tambahkan cahaya
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(0, 1, 1).normalize();
+    scene.add(light);
+
+    // Planet A (kiri)
+    const planetAGeo = new THREE.SphereGeometry(2, 32, 32);
+    const planetAMat = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+    const planetA = new THREE.Mesh(planetAGeo, planetAMat);
+    planetA.position.x = -30;
+    scene.add(planetA);
+
+    // Planet B (kanan)
+    const planetBGeo = new THREE.SphereGeometry(2, 32, 32);
+    const planetBMat = new THREE.MeshPhongMaterial({ color: 0x0000ff });
+    const planetB = new THREE.Mesh(planetBGeo, planetBMat);
+    planetB.position.x = 30;
+    scene.add(planetB);
+
+    // Posisi awal kamera
+    camera.position.z = 50;
+
+    // GLBB untuk dua planet
+    let velocityA = 0;
+    let velocityB = 0;
+    const acceleration = 0.02;
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // Update kecepatan
+      velocityA += acceleration;
+      velocityB += acceleration;
+
+      // Update posisi
+      planetA.position.x += velocityA;
+      planetB.position.x -= velocityB;
+
+      // Hentikan jika sudah bertabrakan
+      if (planetA.position.x + 2 >= planetB.position.x - 2) {
+        velocityA = 0;
+        velocityB = 0;
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+  </script>
 </body>
 </html>
