@@ -1,0 +1,156 @@
+body { 
+    margin: 0; overflow: hidden; font-family: 'Courier New', monospace; 
+}
+canvas { 
+    display: block; 
+}
+
+.hud-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.telemetry-panel {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(0, 20, 40, 0.9);
+    border: 2px solid #00ff88;
+    border-radius: 12px;
+    padding: 20px;
+    color: #00ff88;
+    min-width: 280px;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+}
+
+.engine-panel {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(40, 20, 0, 0.9);
+    border: 2px solid #ff8800;
+    border-radius: 12px;
+    padding: 20px;
+    color: #ff8800;
+    min-width: 250px;
+    box-shadow: 0 0 20px rgba(255, 136, 0, 0.3);
+}
+
+.controls-panel {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(20, 0, 40, 0.9);
+    border: 2px solid #8800ff;
+    border-radius: 12px;
+    padding: 20px;
+    color: #8800ff;
+    pointer-events: all;
+    box-shadow: 0 0 20px rgba(136, 0, 255, 0.3);
+}
+
+.status-panel {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(40, 0, 20, 0.9);
+    border: 2px solid #ff0088;
+    border-radius: 12px;
+    padding: 20px;
+    color: #ff0088;
+    min-width: 200px;
+    box-shadow: 0 0 20px rgba(255, 0, 136, 0.3);
+}
+
+.hud-title {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+    text-shadow: 0 0 10px currentColor;
+}
+
+.data-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;
+    font-size: 12px;
+}
+
+.critical { color: #ff4444 !important; }
+.warning { color: #ffaa44 !important; }
+.normal { color: #44ff44 !important; }
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    margin: 3px 0;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00ff88, #88ff00);
+    transition: width 0.1s;
+    border-radius: 4px;
+}
+
+.engine-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin: 0 5px;
+    background: #333;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+}
+
+.engine-active { 
+    background: radial-gradient(circle, #ff6600, #ff3300);
+    box-shadow: 0 0 15px #ff4400;
+    animation: pulse 0.5s infinite alternate;
+}
+
+@keyframes pulse {
+    from { box-shadow: 0 0 15px #ff4400; }
+    to { box-shadow: 0 0 25px #ff6600; }
+}
+
+button {
+    background: linear-gradient(45deg, #4a90e2, #357abd);
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    margin: 5px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(74, 144, 226, 0.5);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+.danger-btn {
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+}
+
+.danger-btn:hover {
+    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.5);
+}
