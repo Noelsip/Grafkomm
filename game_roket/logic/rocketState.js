@@ -25,11 +25,8 @@ export const rocketState = {
   flightTime: 0,
   maxAltitude: 0,
   maxVelocity: 0,
-<<<<<<< HEAD
-
+  
   separatedBoosters: null,
-=======
->>>>>>> 56691899fc08db7e1385eaf0a9ac72267ec5a8a6
   
   deltaV: 0,
   apoapsis: 0
