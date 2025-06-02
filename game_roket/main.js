@@ -13,7 +13,6 @@ import { updateHUD } from './logic/hud.js';
 
 // Camera control mode
 let cameraMode = 'free'; // 'free' or 'follow'
-let followCameraEnabled = false;
 
 // Initialize scene, camera, and renderer
 setupScene();
@@ -148,56 +147,30 @@ function checkCollisions() {
   }
 }
 
-// Main animation loop
-let lastTime = 0;
-// In main.js, update the animate function
-function animate(currentTime) {
-  requestAnimationFrame(animate);
-  
-  const deltaTime = Math.min((currentTime - lastTime) / 1000, 0.02);
-  lastTime = currentTime;
-  
-  if (deltaTime > 0) {
-    if (rocketState.launched) {
-      updatePhysics(deltaTime, rocketState, controls, ROCKET_CONFIG, GRAVITY, AIR_DENSITY_SEA_LEVEL);
+// Update separated boosters physics
+function updateSeparatedBoosters(deltaTime) {
+  // Update separated boosters if they exist
+  if (rocketState.separatedBoosters) {
+    rocketState.separatedBoosters.forEach((boosterState, index) => {
+      // Apply physics to separated boosters
+      boosterState.velocity.y -= GRAVITY * deltaTime;
+      boosterState.velocity.multiplyScalar(0.98); // Simple drag
+      boosterState.position.add(boosterState.velocity.clone().multiplyScalar(deltaTime));
       
-      // Update separated boosters if they exist
-      if (rocketState.separatedBoosters) {
-        rocketState.separatedBoosters.forEach((boosterState, index) => {
-          // Apply physics to separated boosters
-          boosterState.velocity.y -= GRAVITY * deltaTime;
-          boosterState.velocity.multiplyScalar(0.98); // Simple drag
-          boosterState.position.add(boosterState.velocity.clone().multiplyScalar(deltaTime));
-          
-          // Update rotation
-          boosterState.rotation.x += boosterState.angularVelocity.x * deltaTime;
-          boosterState.rotation.y += boosterState.angularVelocity.y * deltaTime;
-          boosterState.rotation.z += boosterState.angularVelocity.z * deltaTime;
-          
-          // Update visual position
-          if (sideBoosterGroup.children[index]) {
-            sideBoosterGroup.children[index].position.copy(boosterState.position);
-            sideBoosterGroup.children[index].rotation.copy(boosterState.rotation);
-          }
-        });
+      // Update rotation
+      boosterState.rotation.x += boosterState.angularVelocity.x * deltaTime;
+      boosterState.rotation.y += boosterState.angularVelocity.y * deltaTime;
+      boosterState.rotation.z += boosterState.angularVelocity.z * deltaTime;
+      
+      // Update visual position
+      if (sideBoosterGroup.children[index]) {
+        sideBoosterGroup.children[index].position.copy(boosterState.position);
+        sideBoosterGroup.children[index].rotation.copy(boosterState.rotation);
       }
-    }
-}
-function animate(currentTime) {
-  requestAnimationFrame(animate);
-  
-  const deltaTime = Math.min((currentTime - lastTime) / 1000, 0.02); // Cap at 50fps
-  lastTime = currentTime;
-  
-  if (deltaTime > 0) {
-    updatePhysics(deltaTime, rocketState, controls, ROCKET_CONFIG, GRAVITY, AIR_DENSITY_SEA_LEVEL);
+    });
+  }
 
-    updateVisualEffects();
-    updateCamera();
-    updateHUD(rocketState, ROCKET_CONFIG, GRAVITY);
-    checkCollisions();
-
-    // Animate manually detached boosters
+  // Animate manually detached boosters
   scene.traverse(obj => {
     if (obj.userData.velocity) {
       // Apply gravity
@@ -215,7 +188,29 @@ function animate(currentTime) {
       obj.rotation.z += obj.userData.angularVelocity?.z ?? 0;
     }
   });
+}
 
+// Main animation loop
+let lastTime = 0;
+
+function animate(currentTime) {
+  requestAnimationFrame(animate);
+  
+  const deltaTime = Math.min((currentTime - lastTime) / 1000, 0.02); // Cap at 50fps
+  lastTime = currentTime;
+  
+  if (deltaTime > 0) {
+    // Update physics only if rocket is launched
+    if (rocketState.launched) {
+      updatePhysics(deltaTime, rocketState, controls, ROCKET_CONFIG, GRAVITY, AIR_DENSITY_SEA_LEVEL);
+      updateSeparatedBoosters(deltaTime);
+    }
+
+    // Update visual elements
+    updateVisualEffects();
+    updateCamera();
+    updateHUD(rocketState, ROCKET_CONFIG, GRAVITY);
+    checkCollisions();
     
     // Update rocket visual position and rotation
     rocket.position.copy(rocketState.position);
@@ -243,9 +238,8 @@ instructions.innerHTML = `
     <div style="margin: 5px 0;">• Scroll: Zoom</div>
     <div style="margin: 5px 0;">• <strong>C Key:</strong> Toggle Camera Mode</div>
   </div>
-
 `;
-  document.body.appendChild(instructions);
-}
+document.body.appendChild(instructions);
+
 // Start animation
 animate(0);
