@@ -16,11 +16,7 @@ export const ROCKET_CONFIG = {
     thrust: 120000, // N each
     specificImpulse: 260,
     fuelFlow: 47, // kg/s each
-// <<<<<<< HEAD
-    separationAltitude: 1500 ,// meters
-// =======
-    separationAltitude: 250 // meters
-// >>>>>>> 56691899fc08db7e1385eaf0a9ac72267ec5a8a6
+    separationAltitude: 1500 // meters
   },
   rcs: {
     thrust: 400, // N total

@@ -1,3 +1,5 @@
+//physics.js
+
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js';
 import { rocket, sideBoosterGroup } from './rocket.js';
 import { scene } from './sceneSetup.js';
@@ -126,7 +128,7 @@ export function updatePhysics(deltaTime, rocketState, controls, ROCKET_CONFIG, G
 
       boosterGroup.userData.velocity = new THREE.Vector3(
         (index === 0 ? -1 : 1) * 2,
-        rocketState.velocity.y -2 ,
+        rocketState.velocity.y - 2 ,
         0
       );
       boosterGroup.userData.angularVelocity = new THREE.Vector3(
@@ -134,6 +136,7 @@ export function updatePhysics(deltaTime, rocketState, controls, ROCKET_CONFIG, G
         0,
         (index === 0 ? -1 : 1) * 0.01
       );
+      boosterGroup.userData.life = 3;
     });
 
     sideBoosterGroup.clear();

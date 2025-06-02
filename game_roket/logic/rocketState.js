@@ -25,7 +25,7 @@ export const rocketState = {
   flightTime: 0,
   maxAltitude: 0,
   maxVelocity: 0,
-  
+
   separatedBoosters: null,
   
   deltaV: 0,
