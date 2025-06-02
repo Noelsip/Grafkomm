@@ -150,6 +150,7 @@ function checkCollisions() {
 
 // Main animation loop
 let lastTime = 0;
+<<<<<<< HEAD
 // In main.js, update the animate function
 function animate(currentTime) {
   requestAnimationFrame(animate);
@@ -183,10 +184,21 @@ function animate(currentTime) {
       }
     }
   
+=======
+function animate(currentTime) {
+  requestAnimationFrame(animate);
+  
+  const deltaTime = Math.min((currentTime - lastTime) / 1000, 0.02); // Cap at 50fps
+  lastTime = currentTime;
+  
+  if (deltaTime > 0) {
+    updatePhysics(deltaTime, rocketState, controls, ROCKET_CONFIG, GRAVITY, AIR_DENSITY_SEA_LEVEL);
+>>>>>>> 56691899fc08db7e1385eaf0a9ac72267ec5a8a6
     updateVisualEffects();
     updateCamera();
     updateHUD(rocketState, ROCKET_CONFIG, GRAVITY);
     checkCollisions();
+<<<<<<< HEAD
 
     // Animate manually detached boosters
   scene.traverse(obj => {
@@ -207,6 +219,9 @@ function animate(currentTime) {
     }
   });
 
+=======
+    
+>>>>>>> 56691899fc08db7e1385eaf0a9ac72267ec5a8a6
     // Update rocket visual position and rotation
     rocket.position.copy(rocketState.position);
     rocket.rotation.copy(rocketState.rotation);
@@ -215,6 +230,16 @@ function animate(currentTime) {
   renderer.render(scene, camera);
 }
 
+<<<<<<< HEAD
+=======
+// Handle window resize
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+>>>>>>> 56691899fc08db7e1385eaf0a9ac72267ec5a8a6
 // Add instructions to HUD
 const instructions = document.createElement('div');
 instructions.innerHTML = `

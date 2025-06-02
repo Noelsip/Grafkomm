@@ -1,9 +1,14 @@
+<<<<<<< HEAD
+=======
+// rocket.js
+>>>>>>> 56691899fc08db7e1385eaf0a9ac72267ec5a8a6
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js';
 
 export const rocket = new THREE.Group();
 export const sideBoosterGroup = new THREE.Group();
 
 export function createRocket() {
+<<<<<<< HEAD
   // Reset posisi dan rotasi roket
   rocket.position.set(0, 1.5, 0);
   rocket.rotation.set(0, 0, 0);
@@ -16,12 +21,27 @@ export function createRocket() {
   const mainBody = new THREE.Mesh(
     new THREE.CylinderGeometry(0.8, 0.8, 12, 16),
     new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 30, specular: 0x111111 })
+=======
+  rocket.position.set(0, 1.5, 0);
+
+  const mainBody = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.8, 0.8, 12, 16),
+    new THREE.MeshPhongMaterial({ 
+      color: 0xffffff,
+      shininess: 30,
+      specular: 0x111111
+    })
+>>>>>>> 56691899fc08db7e1385eaf0a9ac72267ec5a8a6
   );
   mainBody.position.y = 6;
   mainBody.castShadow = true;
   rocket.add(mainBody);
 
+<<<<<<< HEAD
   // === TANKS ===
+=======
+  const tankMaterial = new THREE.MeshPhongMaterial({ color: 0xf0f0f0, shininess: 20 });
+>>>>>>> 56691899fc08db7e1385eaf0a9ac72267ec5a8a6
   for (let i = 0; i < 3; i++) {
     const tank = new THREE.Mesh(
       new THREE.CylinderGeometry(0.82, 0.82, 0.3, 16),
@@ -31,32 +51,55 @@ export function createRocket() {
     rocket.add(tank);
   }
 
+<<<<<<< HEAD
   // === NOSE CONE ===
   const noseCone = new THREE.Mesh(
     new THREE.ConeGeometry(0.8, 3, 16),
     new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 50 })
+=======
+  const noseCone = new THREE.Mesh(
+    new THREE.ConeGeometry(0.8, 3, 16),
+    new THREE.MeshPhongMaterial({ 
+      color: 0xffffff,
+      shininess: 50
+    })
+>>>>>>> 56691899fc08db7e1385eaf0a9ac72267ec5a8a6
   );
   noseCone.position.y = 13.5;
   noseCone.castShadow = true;
   rocket.add(noseCone);
 
+<<<<<<< HEAD
   // === SIDE BOOSTERS ===
   for (let i = -1; i <= 1; i += 2) {
     const boosterGroup = new THREE.Group();
     boosterGroup.position.set(i * 1.5, 0, 0); // posisi relatif ke roket utama
 
+=======
+  for (let i = -1; i <= 1; i += 2) {
+    const boosterGroup = new THREE.Group();
+    
+>>>>>>> 56691899fc08db7e1385eaf0a9ac72267ec5a8a6
     const booster = new THREE.Mesh(
       new THREE.CylinderGeometry(0.4, 0.4, 10, 12),
       new THREE.MeshPhongMaterial({ color: 0x222222, shininess: 20 })
     );
+<<<<<<< HEAD
     booster.position.set(0, 5, 0);
     booster.castShadow = true;
     boosterGroup.add(booster);
 
+=======
+    booster.position.set(i * 1.5, 5, 0);
+    booster.castShadow = true;
+    boosterGroup.add(booster);
+    
+>>>>>>> 56691899fc08db7e1385eaf0a9ac72267ec5a8a6
     const boosterNose = new THREE.Mesh(
       new THREE.ConeGeometry(0.4, 1.5, 12),
       new THREE.MeshPhongMaterial({ color: 0x222222 })
     );
+<<<<<<< HEAD
     boosterNose.position.set(0, 10.75, 0);
     boosterNose.castShadow = true;
     boosterGroup.add(boosterNose);
@@ -73,6 +116,16 @@ export function createRocket() {
   }
 
   // === MAIN ENGINE NOZZLE ===
+=======
+    boosterNose.position.set(i * 1.5, 10.75, 0);
+    boosterNose.castShadow = true;
+    boosterGroup.add(boosterNose);
+    
+    sideBoosterGroup.add(boosterGroup);
+  }
+  rocket.add(sideBoosterGroup);
+
+>>>>>>> 56691899fc08db7e1385eaf0a9ac72267ec5a8a6
   const mainNozzle = new THREE.Mesh(
     new THREE.ConeGeometry(0.6, 1.5, 12),
     new THREE.MeshPhongMaterial({ color: 0x444444, shininess: 80 })
@@ -81,6 +134,19 @@ export function createRocket() {
   mainNozzle.castShadow = true;
   rocket.add(mainNozzle);
 
+<<<<<<< HEAD
   // === ADD BOOSTERS TO ROCKET ===
   rocket.add(sideBoosterGroup);
 }
+=======
+  for (let i = -1; i <= 1; i += 2) {
+    const nozzle = new THREE.Mesh(
+      new THREE.ConeGeometry(0.3, 0.8, 8),
+      new THREE.MeshPhongMaterial({ color: 0x444444, shininess: 80 })
+    );
+    nozzle.position.set(i * 1.5, -0.4, 0);
+    nozzle.castShadow = true;
+    sideBoosterGroup.add(nozzle);
+  }
+}
+>>>>>>> 56691899fc08db7e1385eaf0a9ac72267ec5a8a6
